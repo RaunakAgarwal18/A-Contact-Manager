@@ -11,8 +11,9 @@
             <div class="row">
                 <div class="col-md-8 offset-md-2">
                     <div class="my-card mt-2">
-                        <div class="alert text-center" th:if="${session.message}" th:classappend="${session.message.type}">
-                            <p th:text="${session.message.content}"></p>
+                        <div th:if="${session.message}" class="alert text-center" role="alert" th:classappend="${session.message.type}">
+                            <span th:text="${session.message.content}"></span>
+                            <th:block th:text="${@sessionServices.removeMessageFromSession()}"></th:block>
                         </div>
                         <div class="text-center">
                             <img style="width: 80px;" src="" th:src="@{/img/membership.png}" alt="">
@@ -20,7 +21,7 @@
                         <h1 class="text-center">
                             SignUp Here
                         </h1>
-                        <form action="" th:action="@{/do_register}" method="post" th:object="${user}">
+                        <form action="#" th:action="@{/do_register}" method="post" th:object="${user}" enctype="multipart/form-data">
 
                             <!-- Name field -->
                             <div class="form-group">
@@ -75,6 +76,14 @@
                                             th:value="${user.about}">
                                 </textarea>
                             </div>
+                            
+                            <!-- Image Field -->
+                            <div class="form-group">
+                                <div class="custom-file">
+                                    <input type="file" name="profileImage">
+                                </div>
+                            </div>
+                            
 
                             <!-- Agreement field -->
                             <div class="form-group form-check text-center">
