@@ -178,11 +178,11 @@ public class userController {
 
                 //Saving the new image
                 File saveFile = new ClassPathResource("static/img").getFile();
-                Path path = Paths.get(saveFile.getAbsolutePath()+File.separator+file.getOriginalFilename());
+                Path path = Paths.get(saveFile.getAbsolutePath()+File.separator+"SCM"+user.getContacts().size()+""+contact.getCid()+file.getOriginalFilename());
                 // Path path = Paths.get(saveFile.getAbsolutePath()+File.separator+"SCM"+user.getContacts().size()+file.getOriginalFilename());
 
                 Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-                contact.setImage("SCM"+user.getContacts().size()+file.getOriginalFilename());    //Saving the new image
+                contact.setImage("SCM"+user.getContacts().size()+""+contact.getCid()+file.getOriginalFilename());    //Saving the new image
             }else{
                 contact.setImage(oldContactDetail.getImage());   //saving the old image
             }
