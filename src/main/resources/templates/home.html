@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeLeaf.org" th:replace="base::layout(~{::section})">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Page</title>
+</head>
+<body>
+    <section class="banner d-flex justify-content-center align-items-center mt-5">
+        <div class="text-center">
+            <h1 class="font-weight-bold">Smart Contact Manager</h1>
+            <p>
+                Start collecting your contact in a much smarter way. 
+                We provide very efficient and smart way of handling contacts.
+            </p>
+            <button class="btn bg-primar btn-lg text-white"><a style="text-decoration: none; color: white;" th:href="@{/user/index}" href="#">Get Started</a></button>
+        </div>
+    </section>
+</body>
+</html>

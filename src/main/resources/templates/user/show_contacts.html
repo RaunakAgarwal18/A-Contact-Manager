@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeLeaf.org" th:replace="user/UserBase::layout(~{::section})">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User DashBoard</title>
+</head>
+<body>
+    <section>
+        
+        <div class="card ml-3 mr-3">
+            <div class="card-body" th:unless="${totalPages==0}">
+                <h1 class="text-center">Your Contacts</h1>
+                <div class="container text-center" th:if="${session.message}" th:classappend="${session.message.type}">
+                    <span th:text="${session.message.content}"></span>
+                    <th:block th:text="${@sessionServices.removeMessageFromSession()}"></th:block>
+                </div>
+                <div class="search-container my-3">
+                    <input onkeyup="search()" id="search-input" type="text" class="form-control" placeholder="Search a contact">
+                    <div class="search-result">
+                        
+                    </div>
+                </div>
+
+
+
+                <table class="table table-striped table-hover table-responsive-lg">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Sl no.</th>
+                            <th scope="col">First Name</th>
+                            <th scope="col">Nickname</th>
+                            <th scope="col">Phone</th>
+                            <th scope="col">Email</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="c,stat:${contacts}">
+                            <th scope="row" th:text="${size + stat.count}"></th>
+                            <td>
+                                <img class="my_profile_picture" src="" alt=" " th:src="@{'/img/'+${c.image}}">
+                                <span th:text="${'&nbsp;'+c.name}"></span></td>
+                            <td th:text="${c.secondName}"></td>
+                            <td th:text="${c.phone}"></td>
+                            <td>
+                                <a href="#" th:href="@{'/user/contact/'+${currentPage}+'/'+${c.cid}}"><span th:text="${c.email}"></span></a>
+                                
+                            </td>
+                            <td>
+                                <a href="#" th:onclick="|deleteContact(${c.cid})|"><button class="btn btn-danger btn-sm">Delete</button></a>
+                                <form method="post" th:action="@{'/user/update-contact/'+${c.cid}}" type="submit" class="d-inline">
+                                    <button class="btn btn-primary btn-sm">Update</button>
+                                </form>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        <li th:if="${currentPage != 0}" class="page-item"><a th:href="@{'/user/show-contact/'+${currentPage-1}}" class="page-link" href="#">Previous</a></li>
+
+                        <li th:classappend="${currentPage==i-1?'active':''}" th:each="i : ${#numbers.sequence(1,totalPages)}" class="page-item"><a th:href="@{'/user/show-contact/'+${i-1}}" class="page-link" href="#"><span th:text="${i}"></span></a></li>
+
+                        <li th:if="${currentPage+1 != totalPages}" class="page-item"><a th:href="@{'/user/show-contact/'+${currentPage+1}}" class="page-link" href="#">Next</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="container text-center mb-3" th:if="${totalPages==0}">
+                <p>You have no Contacts!!</p>
+                <a href="#" th:href="@{/user/add-contact}">
+                    <button class="btn btn-primary">Add Contact</button>
+                </a>
+            </div>
+        </div>
+        <script>
+            $(".item").removeClass("active")
+            $("#view-contacts-link").addClass("active")
+        </script>
+    </section>
+</body>
+</html>

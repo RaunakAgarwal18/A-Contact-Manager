@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base::layout(~{::section})">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+</head>
+<body>
+    <section>
+        <div class="container mt-5" style="display: flex; text-align: center; justify-content: center;">
+            <div id="loginbox" style="margin-top: 50px; width: 30vw;" >
+                <div class="card border-info">
+                    <div class="card-header bg-info bg-primar text-white">
+                        Forgot Password
+                    </div>
+
+                    <div class="card-body">
+                        <div class="card-text">
+                            <div class="alert text-center" th:if="${session.message}" th:classappend="${session.message.type}">
+                                <p th:text="${session.message.content}"></p>
+                            </div>
+                            <h5 class="m-3">Enter your registered email ID.</h5>
+                            <form action="" th:action="@{/send-otp}" method="post">
+                                <div class="form-group">
+                                    <input name="email" type="email" placeholder="Enter Email Id" required>
+                                </div>
+                                <div class="container">
+                                    <button class="btn btn-warning" type="submit">
+                                        Send OTP
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>

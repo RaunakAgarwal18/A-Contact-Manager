@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org" th:replace="base::layout(~{::section})">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+</head>
+<body>
+    <section>
+        <div class="container mt-5" style="display: flex; text-align: center; justify-content: center;">
+            <div id="loginbox" style="margin-top: 50px; width: 30vw;" >
+                <div class="card border-info">
+                    <div class="card-header bg-info bg-primar text-white">
+                        Log In
+                    </div>
+
+                    <div class="card-body">
+                        <div class="card-text">
+
+                            <!-- Login Form -->
+                            <form action="#" th:action="@{/dologin}" method="post" class="form-horizontal">
+
+                                <!-- Place for messages: error, alert etc ... -->
+                                <div class="form-group">
+                                    <div class="col-xs-15">
+                                        <div>
+                                            <!-- Check for login error -->
+                                            <div th:if="${param.error != null}">
+                                                <div class="alert alert-danger">
+                                                    Invalid username and password.
+                                                </div>
+                                            </div>
+                                            <div th:if="${param.logout != null}">
+                                                <div class="alert alert-success">
+                                                    Successfully Logged Out.
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="text-center">
+                                    <img style="width: 80px;" src="" th:src="@{/img/key.png}" alt="">
+                                </div>
+                                <h1 class="text-center" style="margin-bottom: 10px;">
+                                    Login Here
+                                </h1>
+
+                                <!-- User name -->
+                                <div style="margin-bottom: 25px;" class="input-group form-group">
+                                    <input type="text" name="username" placeholder="Email ID" class="form-control" id="email_field" aria-describedby="emailHelp" >
+                                </div>
+
+                                <!-- Password -->
+                                <div style="margin-bottom: 25px;" class="input-group">
+                                    <input type="password" name="password" placeholder="Password" class="form-control">
+                                </div>
+
+                                <!-- Login/Submit Button -->
+                                <div style="margin-top: 10px;" class="form-group">
+                                    <div class="controls">
+                                        <button type="submit" class="btn btn-success">Login</button>
+                                    </div>
+                                </div>
+                            </form>   
+                            <div class="container mt-4">
+                                <div>
+                                    <span>Don't have an account?</span>
+                                </div>
+                                <div class="mt-3">
+                                    <a class="" href="#" th:href="@{/signup}">
+                                        <button class="btn btn-sm btn-info"><b>Sign Up</b></button>
+                                    </a>
+                                </div>
+                            </div>
+                            <div class="container mt-3">
+                                <div>
+                                    Forgot Your Password? <a href="" th:href="@{/forgotPassword}">Click Here!</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</body>
+</html>
