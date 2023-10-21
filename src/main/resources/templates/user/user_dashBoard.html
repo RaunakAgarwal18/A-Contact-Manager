@@ -12,7 +12,7 @@
             <div class="card my-3">
                 <div class="card-body my-5 mx-4">
                     <div class="container text-center">
-                        <img src="" alt="" th:src="@{/img/user.png}" class="profile_picture">
+                        <img src="" alt="" th:src="@{'/img/'+${user.imageURL}}" class="profile_picture">
                         <h3 class="mt-3">Welcome!! <span th:text="${user.name}"></h3>
                     </div>
                     <h1 class="text-center mt-3 text-secondary font-italic font-weight-light">Start Adding your contacts to cloud.</h1>

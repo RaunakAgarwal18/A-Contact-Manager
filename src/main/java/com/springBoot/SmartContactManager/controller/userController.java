@@ -235,4 +235,35 @@ public class userController {
         
         return "redirect:/user/settings";
     }
+
+    @PostMapping("/update-profile")
+    public String updateProfileHandler(@ModelAttribute User user, @RequestParam("profileImage") MultipartFile file, HttpSession session){
+
+        try {
+            User oldUserDetail = userRepository.findById(user.getId()).get();  //Getting the old contact detail before making changes
+            if(!file.isEmpty()){
+
+                //deleteing the old image if new image is uploaded
+                File deleteFile = new ClassPathResource("static/img").getFile();
+                File file1 = new File(deleteFile, oldUserDetail.getImageURL());
+                file1.delete();
+
+                //Saving the new image
+                File saveFile = new ClassPathResource("static/img").getFile();
+                Path path = Paths.get(saveFile.getAbsolutePath()+File.separator+"SCM"+user.getContacts().size()+""+user.getId()+file.getOriginalFilename());
+                // Path path = Paths.get(saveFile.getAbsolutePath()+File.separator+"SCM"+user.getContacts().size()+file.getOriginalFilename());
+
+                Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
+                user.setImageURL("SCM"+user.getContacts().size()+""+user.getId()+file.getOriginalFilename());    //Saving the new image
+            }else{
+                user.setImageURL(oldUserDetail.getImageURL());   //saving the old image
+            }
+            userRepository.save(user);
+            session.setAttribute("message", new Message("Profile Updated Successfully!!", "alert-success"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            session.setAttribute("message", new Message("Something went Wrong!!", "alert-danger"));
+        }
+        return "redirect:/user/settings";
+    }
 }
