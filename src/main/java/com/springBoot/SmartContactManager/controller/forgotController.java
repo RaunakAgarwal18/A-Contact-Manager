@@ -34,13 +34,19 @@ public class forgotController {
     }
     @PostMapping("/send-otp")
     public String sendOTP(@RequestParam("email") String email){
+        try {
+            int otp = random.nextInt(1000000);
+            String OTP = Integer.toString(otp);
+            session.setAttribute("otp", OTP);
+            session.setAttribute("userEmail", email);
+            eService.sendOTPEmail(email, OTP);
+            return "forgotPassword/verify_otp";
+        } catch (Exception e) {
+            e.printStackTrace();
+            session.setAttribute("message", new Message("Something went wrong! Try again later.", "alert-danger"));
+            return "forgotPassword/forgot_email_form";
+        }
         
-        int otp = random.nextInt(1000000);
-        String OTP = Integer.toString(otp);
-        session.setAttribute("otp", OTP);
-        session.setAttribute("userEmail", email);
-        eService.sendOTPEmail(email, OTP);
-        return "forgotPassword/verify_otp";
     }
 
     @RequestMapping("/otp-check")
