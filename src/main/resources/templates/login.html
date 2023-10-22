@@ -16,7 +16,10 @@
 
                     <div class="card-body">
                         <div class="card-text">
-
+                            <div th:if="${session.message}" class="alert text-center" role="alert" th:classappend="${session.message.type}">
+                                <span th:text="${session.message.content}"></span>
+                                <th:block th:text="${@sessionServices.removeMessageFromSession()}"></th:block>
+                            </div>
                             <!-- Login Form -->
                             <form action="#" th:action="@{/dologin}" method="post" class="form-horizontal">
 

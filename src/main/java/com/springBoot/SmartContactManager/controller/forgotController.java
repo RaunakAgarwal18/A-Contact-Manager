@@ -1,7 +1,5 @@
 package com.springBoot.SmartContactManager.controller;
 
-import java.util.Random;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -27,8 +25,6 @@ public class forgotController {
     @Autowired
     private emailService eService;                                 //Required to send email to the User
 
-    Random random = new Random(100000);                       //Setting the lower limit of the otp (6 digits otp)
-
     @RequestMapping("/forgotPassword")
     public String openEmailForm(){
         return "forgotPassword/forgot_email_form";
@@ -38,7 +34,7 @@ public class forgotController {
     @PostMapping("/send-otp")
     public String sendOTP(@RequestParam("email") String email){
         try {
-            int otp = random.nextInt(1000000);               //Generating random OTP (6 digits)
+            int otp = (int)(Math.random()*1000000+Math.random()*100000+Math.random()*10000+Math.random()*1000+Math.random()*100+Math.random()*10);
             String OTP = Integer.toString(otp);
             session.setAttribute("otp", OTP);                 //Storing the Otp to verify later
             session.setAttribute("userEmail", email);
@@ -49,7 +45,6 @@ public class forgotController {
             session.setAttribute("message", new Message("Something went wrong! Try again later.", "alert-danger"));
             return "forgotPassword/forgot_email_form";             //Returning the email page if something went wrong
         }
-        
     }
 
     //Handler to check the entered otp
@@ -77,7 +72,7 @@ public class forgotController {
             user.setPassword("{noop}"+confirmNewPassword);
             userRepository.save(user);
             session.setAttribute("message", new Message("Password changed!!", "alert-success"));
-            return "forgotPassword/forgot_email_form";
+            return "login";
         }else{
             session.setAttribute("message", new Message("Passwords did not match!!", "alert-danger"));
             return "forgotPassword/change_password";
