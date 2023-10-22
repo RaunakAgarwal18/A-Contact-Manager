@@ -31,15 +31,15 @@ public class Contact {
 
     private String image;
 
-    @Column(length=500) // Restricts the description to 500 characters
+    @Column(length=1000) // Restricts the description to 1000 characters
     private String description;
     
-    public Contact(){
+    //non parameterized constructor
+    public Contact(){}
 
-    }
     //Parameterized Constructor
     public Contact(int cid, String name, String secondName, String work, String email, String phone, String image,
-            String description, User user) {
+                    String description, User user) {
         this.cid = cid;
         this.name = name;
         this.secondName = secondName;
@@ -50,6 +50,7 @@ public class Contact {
         this.description = description;
         this.user = user;
     }
+
     //Tells that many contact can point to a single user
     @ManyToOne()
     @JsonIgnore
@@ -110,6 +111,4 @@ public class Contact {
     public void setUser(User user) {
         this.user = user;
     }
-
-    
 }

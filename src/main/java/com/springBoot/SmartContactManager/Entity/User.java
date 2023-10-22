@@ -34,7 +34,7 @@ public class User {
 
     private String imageURL;
 
-    @Column(length = 5000) // Restrict the length of about to 500 characters
+    @Column(length = 1000) // Restrict the length of about to 500 characters
     private String about;
 
     //Tells that a user can have many contacts

@@ -23,7 +23,7 @@ public class MyOrder {
 
     private String status;
 
-    @ManyToOne
+    @ManyToOne               //One user can have many orders
     private User user;
 
     private String paymentId;

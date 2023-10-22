@@ -1,6 +1,8 @@
 package com.springBoot.SmartContactManager.helper;
 
 public class Message {
+
+    //Class to store the error or success message
     
     private String content;
     private String type;

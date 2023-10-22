@@ -12,6 +12,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class emailService {
 
+    //class to send Email to the user
+
     private final JavaMailSender javaMailSender;
 
     public emailService(JavaMailSender javaMailSender) {

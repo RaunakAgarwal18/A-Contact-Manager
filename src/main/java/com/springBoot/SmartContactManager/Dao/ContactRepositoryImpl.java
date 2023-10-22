@@ -13,6 +13,8 @@ public class ContactRepositoryImpl{
     
     @Autowired
     private UserRepository userRepository;
+
+    //Returns the list of contacts whose name contains the given name
     public List<Contact> findContactsByNameContainingAndUser(String name,int id){
         Optional<User> userOptional = userRepository.findById(id);
         User user = userOptional.get();

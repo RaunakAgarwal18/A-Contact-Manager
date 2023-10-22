@@ -7,7 +7,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.Principal;
 import java.util.Map;
-// import java.util.List;
 import java.util.Optional;
 
 import org.json.JSONObject;
@@ -36,7 +35,6 @@ import com.springBoot.SmartContactManager.Entity.Contact;
 import com.springBoot.SmartContactManager.Entity.MyOrder;
 import com.springBoot.SmartContactManager.Entity.User;
 import com.springBoot.SmartContactManager.helper.Message;
-// import com.springBoot.SmartContactManager.services.sessionServices;
 
 import jakarta.servlet.http.HttpSession;
 
@@ -48,7 +46,6 @@ import com.razorpay.RazorpayClient;
 @RequestMapping("/user")                                              //Default Path for a logged in user starts from /user
 public class userController {
     
-
     @Autowired
     private UserRepository userRepository;                            // To use basic CRUD features on User
 
@@ -68,6 +65,7 @@ public class userController {
     //Returns the home page after login
     @RequestMapping("/index") 
     public String dashBoard(Model model, Principal principal){        //Principal tells us the username and password of the logged in user
+        model.addAttribute("title", "User DashBoard");
         return "user/user_dashBoard";
     }
 
@@ -81,31 +79,24 @@ public class userController {
 
     //Handler to save the contact that is send via contact form
     @PostMapping("/process-contact")
-    public String addContact(@ModelAttribute Contact contact,                      //Fetching the contact object containing the details of the contact from the model
-                                Principal principal,                               //Fetching the user details of the logged in user
-                                @RequestParam("profileImage") MultipartFile file,  //Getting the image that is entered
-                                HttpSession session){                              //Session to send a message if there is any error
+    public String addContact(@ModelAttribute Contact contact,                                                            //Fetching the contact object containing the details of the contact from the model
+                                Principal principal,                                                                     //Fetching the user details of the logged in user
+                                @RequestParam("profileImage") MultipartFile file,                                        //Getting the image that is entered
+                                HttpSession session){                                                                    //Session to send a message if there is any error
         try {
-            String name = principal.getName();                                     //Getting the field that is unique i.e. Email
-            User user = userRepository.getUserByUserName(name);                    //Custon query in DAO which returns the User by using the Email
-            user.getContacts().add(contact);                                       //Adding the contact to the User
-            // contact.setUser(user); //Linking the contact to the User
-            //Linking is not reuqired because we used join column in contact entity class
+            String name = principal.getName();                                                                           //Getting the field that is unique i.e. Email
+            User user = userRepository.getUserByUserName(name);                                                          //Custon query in DAO which returns the User by using the Email
+            user.getContacts().add(contact);                                                                             //Adding the contact to the User
             session.setAttribute("message",new Message("Contact Added Successfully!!", "alert-success"));
-            
-
-            if(!file.isEmpty()){                                                    //Checking if the user entered any photo or not
-                // upload the file to a folder and set a unique name
-                // contact.setImage("SCM"+user.getContacts().size()+file.getOriginalFilename());
-                contact.setImage(file.getOriginalFilename());                       //Linking the image to the contact
-                File saveFile = new ClassPathResource("static/img").getFile();                  //saving the file in img folder
-                // Path path = Paths.get(saveFile.getAbsolutePath()+File.separator+"SCM"+user.getContacts().size()+file.getOriginalFilename());
-                Path path = Paths.get(saveFile.getAbsolutePath()+File.separator+file.getOriginalFilename());
+            if(!file.isEmpty()){                                                                                         //Checking if the user entered any photo or not
+                contact.setImage("SCM"+user.getId()+""+user.getContacts().size()+file.getOriginalFilename());            //Linking the image to the contact
+                File saveFile = new ClassPathResource("static/img").getFile();                                      //saving the file in img folder
+                Path path = Paths.get(saveFile.getAbsolutePath()+File.separator+"SCM"+user.getId()+""+user.getContacts().size()+file.getOriginalFilename());
                 Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
             }else{
-                contact.setImage("user.png");                                 //setting a default image if the image is not provided
+                contact.setImage("user.png");                                                                      //setting a default image if the image is not provided
             }
-            userRepository.save(user);                                              //saving the user will automatically save the contact because the cascade type all
+            userRepository.save(user);                                                                                   //saving the user will automatically save the contact because the cascade type all
         } catch (Exception e) {
             e.getStackTrace();
             session.setAttribute("message",new Message("Something Went Wrong!! Try Again.", "alert-danger"));
@@ -117,11 +108,8 @@ public class userController {
     @GetMapping("/show-contact/{page}")                                                             
     public String showContact(@PathVariable("page") Integer page,Model model,Principal principal){
         model.addAttribute("title", "Contact List");
-        // String userName = principal.getName();
-        // User user = userRepository.getUserByUserName(userName);
-        // List<Contact> contacts = user.getContacts();
         int size = 5;
-        Pageable pageable = PageRequest.of(page, size);                                            //Defining the maximum number of contacts in a page
+        Pageable pageable = PageRequest.of(page, size);                                                                                       //Defining the maximum number of contacts in a page
         Page<Contact> contacts = contactRepository.findContactByUser(userRepository.getUserByUserName(principal.getName()).getId(),pageable); //Returns pages of contacts
         model.addAttribute("contacts", contacts);
         model.addAttribute("currentPage",page);
@@ -133,11 +121,9 @@ public class userController {
 
     //Handler to show a specific contact
     @RequestMapping("/contact/{page}/{cid}") 
-    public String showContactDetail(@PathVariable("cid") Integer id,@PathVariable("page") Integer page,Model model, Principal principal){
-        
+    public String showContactDetail(@PathVariable("cid") Integer id, @PathVariable("page") Integer page, Model model, Principal principal){
         Optional<Contact> contactOptional = contactRepository.findById(id);
         Contact contact = contactOptional.get();
-
         String name = principal.getName();
         User user = userRepository.getUserByUserName(name);
         if(user.getId()==contact.getUser().getId()){                        //Checking if the contact belong to the user or not
@@ -151,7 +137,6 @@ public class userController {
     //Handler to delete a contact
     @GetMapping("/delete/{cid}")
     public String deleteContact(@PathVariable("cid") Integer cid,Model model,Principal principal,HttpSession session){
-
         Optional<Contact> contactOptional = contactRepository.findById(cid);
         Contact contact = contactOptional.get();
         String name = principal.getName();
@@ -179,7 +164,7 @@ public class userController {
     public String updateHandler(@ModelAttribute Contact contact, @RequestParam("profileImage") MultipartFile file, Principal principal, HttpSession session){
 
         try {
-            String name = principal.getName();                                     //Getting the field that is unique i.e. Email
+            String name = principal.getName();                                              //Getting the field that is unique i.e. Email
             User user = userRepository.getUserByUserName(name);
             Contact oldContactDetail = contactRepository.findById(contact.getCid()).get();  //Getting the old contact detail before making changes
             if(!file.isEmpty()){
@@ -191,13 +176,11 @@ public class userController {
 
                 //Saving the new image
                 File saveFile = new ClassPathResource("static/img").getFile();
-                Path path = Paths.get(saveFile.getAbsolutePath()+File.separator+"SCM"+user.getContacts().size()+""+contact.getCid()+file.getOriginalFilename());
-                // Path path = Paths.get(saveFile.getAbsolutePath()+File.separator+"SCM"+user.getContacts().size()+file.getOriginalFilename());
-
+                Path path = Paths.get(saveFile.getAbsolutePath()+File.separator+"SCM"+user.getId()+""+user.getContacts().size()+file.getOriginalFilename());
                 Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
-                contact.setImage("SCM"+user.getContacts().size()+""+contact.getCid()+file.getOriginalFilename());    //Saving the new image
+                contact.setImage("SCM"+user.getId()+""+user.getContacts().size()+file.getOriginalFilename());    //Saving the new image
             }else{
-                contact.setImage(oldContactDetail.getImage());   //saving the old image
+                contact.setImage(oldContactDetail.getImage());                                                   //saving the old image if the new image is not uploaded
             }
             contact.setUser(user);
             contactRepository.save(contact);
@@ -216,12 +199,14 @@ public class userController {
         return "user/profile";
     }
 
+    //Handler to open the settings page
     @GetMapping("/settings")
-    public String openSettings(){
-
+    public String openSettings(Model model){
+        model.addAttribute("title", "Settings");
         return "user/settings";
     }
 
+    //Handler to change the password
     @PostMapping("/change-password")
     public String changePassword(@RequestParam("oldPassword") String oldPassword,
                                     @RequestParam("newPassword") String newPassword,
@@ -230,7 +215,7 @@ public class userController {
                                     Principal principal){
         try {
             User user = userRepository.getUserByUserName(principal.getName());
-            if(user.getPassword().equals("{noop}"+oldPassword)){
+            if(user.getPassword().equals("{noop}"+oldPassword)){                              //Cheking if the old password entered matches with the password in the database
                 if(newPassword.equals(confirmNewPassword)){
                     user.setPassword("{noop}"+newPassword);
                     userRepository.save(user);
@@ -245,13 +230,11 @@ public class userController {
             e.getStackTrace();
             session.setAttribute("message", new Message("Something went wrong, Try again later!!", "alert-danger"));
         }
-        
         return "redirect:/user/settings";
     }
 
     @PostMapping("/update-profile")
     public String updateProfileHandler(@ModelAttribute User user, @RequestParam("profileImage") MultipartFile file, HttpSession session){
-
         try {
             User oldUserDetail = userRepository.findById(user.getId()).get();  //Getting the old contact detail before making changes
             if(!file.isEmpty()){
@@ -264,12 +247,10 @@ public class userController {
                 //Saving the new image
                 File saveFile = new ClassPathResource("static/img").getFile();
                 Path path = Paths.get(saveFile.getAbsolutePath()+File.separator+"SCM"+user.getContacts().size()+""+user.getId()+file.getOriginalFilename());
-                // Path path = Paths.get(saveFile.getAbsolutePath()+File.separator+"SCM"+user.getContacts().size()+file.getOriginalFilename());
-
                 Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
                 user.setImageURL("SCM"+user.getContacts().size()+""+user.getId()+file.getOriginalFilename());    //Saving the new image
             }else{
-                user.setImageURL(oldUserDetail.getImageURL());   //saving the old image
+                user.setImageURL(oldUserDetail.getImageURL());                                                   //saving the old image
             }
             userRepository.save(user);
             session.setAttribute("message", new Message("Profile Updated Successfully!!", "alert-success"));
@@ -283,13 +264,12 @@ public class userController {
     //Creating order for payment
     @PostMapping("/create_order")
     @ResponseBody
-    public String createOrder(@RequestBody Map<String, Object> data, Principal principal) throws Exception{
+    public String createOrder(@RequestBody Map<String, Object> data, Principal principal) throws Exception{          //Getting the data from the javaScript file
 
         int amt = Integer.parseInt(data.get("amount").toString());
         var client = new RazorpayClient("rzp_test_AqaY2LH9kz0r0k", "v5uLV1IZ2YxylNFP5EDcggE2");
-        
         JSONObject ob = new JSONObject();
-        ob.put("amount", amt*100);
+        ob.put("amount", amt*100);                           //amount need to be in paise
         ob.put("currency","INR");
         ob.put("receipt","txn_3647373");
 
@@ -303,18 +283,18 @@ public class userController {
         myOrder.setStatus("created");
         myOrder.setUser(userRepository.getUserByUserName(principal.getName()));
         myOrder.setReceipt(order.get("receipt"));
-        myOrderRepository.save(myOrder);
+        myOrderRepository.save(myOrder);                        //Saving the order details in our DataBase 
 
         return order.toString();
     }
 
+    //Handler to update the data in the database after successfull payment
     @PostMapping("/update_order")
     public ResponseEntity<?> updateOrder(@RequestBody Map<String, Object> data){
         MyOrder order = myOrderRepository.findByOrderId(data.get("order_id").toString());
         order.setPaymentId(data.get("payment_id").toString());
         order.setStatus(data.get("status").toString());
         myOrderRepository.save(order);
-
         return ResponseEntity.ok(Map.of("msg","Updated"));
     }
 }

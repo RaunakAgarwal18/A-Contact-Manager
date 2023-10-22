@@ -8,7 +8,6 @@ import java.nio.file.StandardCopyOption;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
-// import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,15 +29,14 @@ public class homeController {
     @Autowired
     private UserRepository userRepository;
 
-    // @Autowired
-    // private BCryptPasswordEncoder passwordEncoder;
-
+    //Handler to show the Home page
     @RequestMapping("/")
     public String home(Model model){
         model.addAttribute("title", "Smart Contact Manager-Home");
         return "home";
     }
     
+    //Handler to show the Signup page
     @RequestMapping("/signup")
     public String sign(Model model){
         model.addAttribute("title", "Smart Contact Manager-SignUp");
@@ -46,18 +44,14 @@ public class homeController {
         return "signup";
     }
     
-    @RequestMapping("/about")
-    public String about(Model model){
-        model.addAttribute("title", "Smart Contact Manager-About");
-        return "about";
-    }
-    
+    //Handler to show the Login page
     @RequestMapping("/login")
     public String login(Model model){
         model.addAttribute("title", "Smart Contact Manager-Login");
         return "login";
     }
     
+    //Handler for saving the contact in the DataBase
     @PostMapping("/do_register")
     public String registerUser( @ModelAttribute("user") User user,  //Gets the user entered from the form
                                 @RequestParam(value = "agreement", defaultValue = "false") boolean agreement, //checks if the user has accepted the terms or conditions or not
@@ -66,8 +60,8 @@ public class homeController {
                                 @RequestParam("profileImage") MultipartFile file){
         boolean check1 = false, check2 = false;
         try {
-            if(!agreement){
-                check1 = true;
+            if(!agreement){                                                                          //Cheking if the user checked the terms box
+                check1 = true;                                                                       //check1 will check for the above
                 throw new Exception("You have not accepted the terms and conditions.");
             }
             user.setRole("ROLE_USER");
@@ -80,16 +74,14 @@ public class homeController {
                 Path path = Paths.get(saveFile.getAbsolutePath()+File.separator+file.getOriginalFilename());
                 Files.copy(file.getInputStream(), path, StandardCopyOption.REPLACE_EXISTING);
             }else{
-                user.setImageURL("user.png");                                 //setting a default image if the image is not provided
+                user.setImageURL("user.png");                                               //setting a default image if the image is not provided
             }
-            
             this.userRepository.save(user);
-            check2 = true;
+            check2 = true;                                                                           //Check2 will check if the user is already registered
             model.addAttribute("user", new User());
             model.addAttribute("agreement", agreement);
             session.setAttribute("message",new Message("Registration successful!!", "alert-success"));
             return "signup";
-            
         } catch (Exception e) {
             e.printStackTrace();
             model.addAttribute("user", user);
@@ -102,11 +94,7 @@ public class homeController {
         }
     }
     
-    @RequestMapping("/admin")
-    public String admin(){
-        return "admin";
-    }
-    
+    //Handler to show deafult login page
     @GetMapping("/showMyLoginPage")
     public String showMyLoginPage(){
         return "login";
