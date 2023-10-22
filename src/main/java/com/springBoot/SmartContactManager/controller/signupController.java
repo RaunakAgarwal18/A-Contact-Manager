@@ -5,7 +5,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
-import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
@@ -94,7 +93,7 @@ public class signupController {
             int otp = (int)(Math.random()*1000000+Math.random()*100000+Math.random()*10000+Math.random()*1000+Math.random()*100+Math.random()*10);               //Generating random OTP (6 digits)
             String OTP = Integer.toString(otp);
             session.setAttribute("otp", OTP);                 //Storing the Otp to verify later
-            eService.sendOTPEmail(email, OTP);                     //sending email containg otp
+            eService.sendOTPEmailForSignUp(email, OTP);                     //sending email containg otp
             return "signupOTP";                    //returning the page where user have to put the otp
         }catch (Exception e) {
             e.printStackTrace();
