@@ -16,8 +16,11 @@
 
                     <div class="card-body">
                         <div class="card-text">
-                            <div class="alert text-center" th:if="${session.message}" th:classappend="${session.message.type}">
-                                <p th:text="${session.message.content}"></p>
+                            <div th:if="${session.message}" class="container">
+                                <div class="alert text-center" role="alert" th:classappend="${session.message.type}">
+                                    <span th:text="${session.message.content}"></span>
+                                    <th:block th:text="${@sessionServices.removeMessageFromSession()}"></th:block>
+                                </div>
                             </div>
                             <h5 class="m-3">Enter your registered email ID.</h5>
                             <form action="" th:action="@{/send-otp}" method="post">
